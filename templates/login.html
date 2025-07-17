@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - CareerPath</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .background-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: 0;
+    }
+
+    .circle1 {
+      width: 300px;
+      height: 300px;
+      background: rgba(147, 51, 234, 0.3);
+      top: 15%;
+      left: 20%;
+    }
+
+    .circle2 {
+      width: 250px;
+      height: 250px;
+      background: rgba(59, 130, 246, 0.3);
+      bottom: 15%;
+      right: 20%;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-card h2 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .glass-card p {
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      padding-right: 2.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #7c3aed;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .error-message {
+      color: #f87171;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+      background: linear-gradient(135deg, #9333ea, #2563eb);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .footer a {
+      color: #a855f7;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      color: #d8b4fe;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background-circle circle1"></div>
+  <div class="background-circle circle2"></div>
+
+  <div class="container">
+    <div class="glass-card">
+      <h2>Login</h2>
+      <p>Access your account</p>
+      <form id="loginForm" novalidate>
+        <!-- Email -->
+        <div class="form-group">
+          <input type="email" id="email" name="email" class="form-input" placeholder="Email Address" required>
+          <div class="error-message" id="emailError"></div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <input type="password" id="password" name="password" class="form-input" placeholder="Password" required>
+          <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+          <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-button">Sign In</button>
+
+        <!-- Footer -->
+        <div class="footer">
+          <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Password Toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.classList.toggle('fa-eye');
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+
+    // Form Validation
+    const form = document.getElementById('loginForm');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      let valid = true;
+
+      // Email validation
+      const email = form.email.value.trim();
+      if (!email || !email.includes('@')) {
+        emailError.textContent = 'Please enter a valid email.';
+        valid = false;
+      } else {
+        emailError.textContent = '';
+      }
+
+      // Password validation
+      const password = form.password.value.trim();
+      if (!password || password.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters.';
+        valid = false;
+      } else {
+        passwordError.textContent = '';
+      }
+
+      if (valid) {
+        alert('Login successful!');
+        // You can perform actual form submission here
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
