@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - CareerPath</title>
+  <title>OTP Verification - CareerPath</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -73,7 +73,7 @@
     .glass-card p {
       color: rgba(255, 255, 255, 0.7);
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-group {
@@ -101,36 +101,50 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    .submit-button {
+    .submit-button,
+    .resend-button {
       width: 100%;
       padding: 0.75rem;
-      background: linear-gradient(135deg, #a855f7, #3b82f6);
       border: none;
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
       border-radius: 12px;
+      font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: white;
+      margin-bottom: 0.75rem;
     }
 
     .submit-button:hover {
       background: linear-gradient(135deg, #9333ea, #2563eb);
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .footer a {
+    .resend-button {
+      background: rgba(255, 255, 255, 0.1);
       color: #a855f7;
-      text-decoration: none;
-      font-weight: 500;
+      border: 1px solid #a855f7;
     }
 
-    .footer a:hover {
-      color: #d8b4fe;
+    .resend-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .timer {
+      text-align: center;
+      margin-top: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .error-message {
+      color: #f87171;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
     }
   </style>
 </head>
@@ -141,25 +155,37 @@
 
   <div class="container">
     <div class="glass-card">
-      <h2>Login</h2>
-      <p>Access your account</p>
-      <form method="POST" action="{{ url_for('login') }}">
+      <h2>OTP Verification</h2>
+      <p>Enter the OTP sent to your email</p>
+
+      <form method="POST">
         <div class="form-group">
-          <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+          <input type="text" name="otp" class="form-input" placeholder="Enter OTP" maxlength="6" required>
         </div>
+        <button type="submit" class="submit-button">Verify OTP</button>
+      </form>
 
-        <div class="form-group">
-          <input type="password" name="password" class="form-input" placeholder="Password" required>
-        </div>
-
-        <button type="submit" class="submit-button">Sign In</button>
-
-        <div class="footer">
-          <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
-        </div>
+      <form method="POST">
+        <button type="submit" class="resend-button" id="resendBtn" disabled>Resend OTP</button>
+        <div class="timer" id="timer">Resend available in <span id="countdown">30</span>s</div>
       </form>
     </div>
   </div>
 
+  <script>
+    let countdown = 30;
+    const resendBtn = document.getElementById("resendBtn");
+    const timerSpan = document.getElementById("countdown");
+
+    const interval = setInterval(() => {
+      countdown--;
+      timerSpan.textContent = countdown;
+      if (countdown <= 0) {
+        clearInterval(interval);
+        resendBtn.disabled = false;
+        document.getElementById("timer").textContent = "You can now resend OTP.";
+      }
+    }, 1000);
+  </script>
 </body>
 </html>
